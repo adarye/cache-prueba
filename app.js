@@ -1,25 +1,17 @@
-
 cache_data = {};
 paramsMapbox = {
     access_token: 'pk.eyJ1IjoiYWRhcnllIiwiYSI6ImNreWVyM3EwNjBzdzAyb3FweHVzY2prZXEifQ.ME6ildfQtTf7ldq4LGjWDg',
     limit: 5,
     language: 'es'
 }
-input_place = document.getElementById('input_place').value;
+
 
 
 async function cache_store(value) {
-    cache_data[query[0]].features = value.features;
+    cache_data[value.query[0]] = value.features;
 }
 async function cache_retrieve(key) {
-    return function (...args) {
-        if (cache_data[args]) {
-            return cache_data[args];
-        }
-        let result = func.apply(this, args);
-        cache_data[args] = result;
-        return result;
-    }
+    return cache_data[key];
 }
 async function slow_funcion(input) {
     try {
@@ -29,17 +21,26 @@ async function slow_funcion(input) {
             params: paramsMapbox
         });
 
-        const resp = await instance.get();
-        return resp.data;
+        const {data} = await instance.get();
+       cache_store(data);
+        return data;
     } catch (error) {
         console.log(error);
     }
 }
 
- async function memoize() {
-     console.log(input_place);
- await slow_funcion(input_place);
-    // let cache = await cache_retrieve(input_place);
-    // console.log(cache)
+async function memoize() {
+    let input_place = document.getElementById('input_place').value;
+    const res =  slow_funcion(input_place);
+    const result =  cache_retrieve(input_place);
     
+ if(res){
+    console.log(res);
+ }
+ if(result){
+    console.log(result);
+ }
+
+
+
 }
