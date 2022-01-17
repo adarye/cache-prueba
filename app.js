@@ -9,11 +9,12 @@ var startTime
 
 async function cache_store(value) {
 
-    cache_data[value.query[0]] = value.features;
+    cache_data[value.query.map(x => x).join(' ')] = value.features;
 
 }
 async function cache_retrieve(key) {
     // setTimeout(() => {
+        console.log(cache_data)
         if(cache_data[key]){
             printRes(cache_data[key], 'From cache');
         }
@@ -45,7 +46,7 @@ async function memoize(slow_funcion) {
     let input_place = document.getElementById('input_place').value;
     startTime = performance.now()
     slow_funcion(input_place);
-    cache_retrieve(input_place)
+    cache_retrieve(input_place.toLowerCase());
 }
 
 
