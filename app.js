@@ -4,43 +4,67 @@ paramsMapbox = {
     limit: 5,
     language: 'es'
 }
-
-
+flatFirst = false;
+var startTime
 
 async function cache_store(value) {
+
     cache_data[value.query[0]] = value.features;
+
 }
 async function cache_retrieve(key) {
-    return cache_data[key];
+    // setTimeout(() => {
+        if(cache_data[key]){
+            printRes(cache_data[key], 'From cache');
+        }
+    // }, 1001);
+
+
 }
 async function slow_funcion(input) {
+
     try {
+
         const instance = axios.create({
             baseURL: `https://api.mapbox.com/geocoding/v5/mapbox.places/${input}.json`,
-            timeout: 1000,
             params: paramsMapbox
         });
 
-        const {data} = await instance.get();
-       cache_store(data);
-        return data;
+        const {
+            data
+        } = await instance.get();
+        cache_store(data);
+        printRes(data.features, 'From API');
     } catch (error) {
         console.log(error);
     }
 }
 
-async function memoize() {
+async function memoize(slow_funcion) {
+    flatFirst = false;
     let input_place = document.getElementById('input_place').value;
-    const res =  slow_funcion(input_place);
-    const result =  cache_retrieve(input_place);
-    
- if(res){
-    console.log(res);
- }
- if(result){
-    console.log(result);
- }
+    startTime = performance.now()
+    slow_funcion(input_place);
+    cache_retrieve(input_place)
+}
 
 
+//make document inner html with for
 
+const printRes = (value, source) => {
+
+    if (!flatFirst) {
+        document.getElementById('first').innerHTML = "";
+        document.getElementById('source').innerHTML = "";
+        document.getElementById('source').innerHTML = source + ' ' + '(' + (performance.now() - startTime).toFixed(2) + ' ms)';
+        flatFirst = true;
+        value.forEach(element => {
+            document.getElementById('first').innerHTML +=
+                `<h5>${element.place_name}</h5>`
+        });
+    }
+}
+
+function search() {
+    memoize(slow_funcion);
 }

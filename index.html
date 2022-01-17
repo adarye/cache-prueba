@@ -7,10 +7,10 @@
     <title>Cache app</title>
 </head>
 <body>
-    <input id="input_place" />
-    <!-- hit a function when event click in button  -->
-
-    <button id="btn_search" onclick="memoize()">Search</button>
+    <input id="input_place" placeholder="Search a place"/>
+    <button id="btn_search" onclick="search()">Search</button>
+    <h2 id="source"></h2>
+    <div id="first"></div>
 
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="app.js"></script>
