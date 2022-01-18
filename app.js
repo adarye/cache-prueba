@@ -2,7 +2,7 @@ cache_data = {};
 paramsMapbox = {
     access_token: 'pk.eyJ1IjoiYWRhcnllIiwiYSI6ImNreWVyM3EwNjBzdzAyb3FweHVzY2prZXEifQ.ME6ildfQtTf7ldq4LGjWDg',
     limit: 5,
-    language: 'es'
+    language: 'en'
 }
 flatFirst = false;
 var startTime
@@ -13,13 +13,9 @@ async function cache_store(value) {
 
 }
 async function cache_retrieve(key) {
-    // setTimeout(() => {
-        console.log(cache_data)
         if(cache_data[key]){
             printRes(cache_data[key], 'From cache');
         }
-    // }, 1001);
-
 
 }
 async function slow_funcion(input) {
@@ -44,6 +40,7 @@ async function slow_funcion(input) {
 async function memoize(slow_funcion) {
     flatFirst = false;
     let input_place = document.getElementById('input_place').value;
+    if(!input_place) return;
     startTime = performance.now()
     slow_funcion(input_place);
     cache_retrieve(input_place.toLowerCase());
@@ -61,7 +58,7 @@ const printRes = (value, source) => {
         flatFirst = true;
         value.forEach(element => {
             document.getElementById('first').innerHTML +=
-                `<h5>${element.place_name}</h5>`
+                `<li class="list-group-item">${element.place_name}</li>`
         });
     }
 }
@@ -69,3 +66,11 @@ const printRes = (value, source) => {
 function search() {
     memoize(slow_funcion);
 }
+document.getElementById('input_place').addEventListener('keyup',function(e) {
+    var keycode = (e.keyCode ? e.keyCode : e.which);
+    if (keycode == '13') {
+       search();
+        e.preventDefault();
+        return false;
+    }
+});
