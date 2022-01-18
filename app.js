@@ -47,7 +47,6 @@ async function memoize(slow_funcion) {
 }
 
 
-//make document inner html with for
 
 const printRes = (value, source) => {
 
